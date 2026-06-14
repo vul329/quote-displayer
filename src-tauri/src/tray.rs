@@ -1,6 +1,6 @@
 use tauri::{
     image::Image,
-    menu::Menu,
+    menu::{Menu, MenuItem},
     tray::{TrayIcon, TrayIconBuilder},
     AppHandle, Manager, Runtime,
 };
@@ -8,9 +8,10 @@ use tauri::{
 use crate::db::AppData;
 use crate::popup;
 
-/// Holds the tray icon for later tooltip updates.
+/// Holds the tray icon + pause item so we can toggle its label.
 pub struct TrayHandle<R: Runtime> {
     icon: TrayIcon<R>,
+    pause_item: MenuItem<R>,
 }
 
 // TrayIcon<R> is Send+Sync as long as R: Runtime
@@ -91,8 +92,12 @@ pub fn setup_tray<R: Runtime>(app: &AppHandle<R>) {
                 "pause" => {
                     let mut settings = data.settings.lock().unwrap();
                     settings.paused = !settings.paused;
+                    let paused = settings.paused;
                     drop(settings);
                     data.persist_all();
+                    if let Some(handle) = app.try_state::<TrayHandle<R>>() {
+                        let _ = handle.pause_item.set_text(if paused { "繼續" } else { "暫停" });
+                    }
                     update_tray_tooltip_impl(app);
                 }
                 "edit" | "select" | "schedule" => {
@@ -141,7 +146,14 @@ pub fn setup_tray<R: Runtime>(app: &AppHandle<R>) {
         .build(app)
         .unwrap();
 
-    app.manage(TrayHandle { icon: tray });
+    // Set initial pause label based on saved state
+    {
+        let data = app.state::<AppData>();
+        let paused = data.settings.lock().unwrap().paused;
+        let _ = pause_item.set_text(if paused { "繼續" } else { "暫停" });
+    }
+
+    app.manage(TrayHandle { icon: tray, pause_item });
 
     update_tray_tooltip_impl(app);
 }
