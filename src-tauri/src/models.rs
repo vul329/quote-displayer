@@ -24,7 +24,7 @@ pub enum ScheduleRule {
     FixedTime { times: Vec<String> },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum DisplayPosition {
     BottomRight,
     BottomLeft,
