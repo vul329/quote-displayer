@@ -1,0 +1,114 @@
+{
+  "categories": [
+    {
+      "name": "未整理"
+    },
+    {
+      "name": "投資"
+    },
+    {
+      "name": "人生"
+    }
+  ],
+  "quotes": [
+    {
+      "id": 2,
+      "content": "不要投資自己賠不起的錢",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 2,
+      "created_at": "2026-06-13 22:11:09"
+    },
+    {
+      "id": 3,
+      "content": "理論上都是對的，心理上都承受不住。",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 3,
+      "created_at": "2026-06-13 22:11:24"
+    },
+    {
+      "id": 4,
+      "content": "活得久比賺得快更重要。\n根據自己的風險承受度，來規劃你的資產配置。",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 4,
+      "created_at": "2026-06-13 22:11:37"
+    },
+    {
+      "id": 5,
+      "content": "利息支出要 <= 穩定現金流的 50%",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 4,
+      "created_at": "2026-06-13 22:17:37"
+    },
+    {
+      "id": 7,
+      "content": "把恐懼寫進合約，把貪婪關在制度，讓情緒退場，讓數字說話",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 2,
+      "created_at": "2026-06-13 22:25:31"
+    },
+    {
+      "id": 8,
+      "content": "借款是一個\"時間價值\"問題，而不是勇氣考驗。只要能控制槓桿，懂得風險，做好金流管理，借款是一個加速器，而不是壓力來源。",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 2,
+      "created_at": "2026-06-13 22:33:14"
+    },
+    {
+      "id": 9,
+      "content": "借帶投資都有極高風險，尤其是都沒在研究的，不會就不要用。不曉得就去學。",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 2,
+      "created_at": "2026-06-13 22:33:18"
+    },
+    {
+      "id": 10,
+      "content": "簡而言之，只要比其他投資人少犯一些錯誤，你的”FIRE”人生就會過得很好。",
+      "author": null,
+      "category": "投資",
+      "enabled": true,
+      "show_count": 0,
+      "created_at": "2026-06-13 23:19:19"
+    },
+    {
+      "id": 11,
+      "content": "想要你就直接別停留再想。想，都是問題；做，才會有答案。",
+      "author": null,
+      "category": "人生",
+      "enabled": true,
+      "show_count": 0,
+      "created_at": "2026-06-13 23:46:44"
+    },
+    {
+      "id": 12,
+      "content": "損益波動只是過程，資產增長才是結果。",
+      "author": null,
+      "category": "未整理",
+      "enabled": true,
+      "show_count": 0,
+      "created_at": "2026-06-14 08:41:56"
+    },
+    {
+      "id": 13,
+      "content": "除非你要退出市場 不然還是不要賣比較好",
+      "author": null,
+      "category": "未整理",
+      "enabled": true,
+      "show_count": 0,
+      "created_at": "2026-06-14 08:42:23"
+    }
+  ]
+}
