@@ -61,6 +61,7 @@ pub fn run() {
             commands::trigger_quote_manually,
             commands::popup_close,
             commands::reload_shortcuts,
+            commands::get_monitor_count,
             popup::get_popup_quote,
         ])
         .build(tauri::generate_context!())

@@ -37,23 +37,40 @@ const POPUP_W: f64 = 500.0;
 const POPUP_H: f64 = 280.0;
 
 /// Calculate popup position based on settings + monitor size.
+/// `Monitor::position()` / `Monitor::size()` return PHYSICAL values,
+/// but `WebviewWindowBuilder::position()` expects LOGICAL coordinates.
+/// We must divide by the DPI scale factor.
 fn calc_position<R: Runtime>(
     app: &AppHandle<R>,
     pos: DisplayPosition,
+    preferred_screen: Option<u32>,
 ) -> Option<(f64, f64)> {
     let main_win = app.get_webview_window("main")?;
-    let mon = main_win.primary_monitor().ok()??;
-    let (mw, mh) = (mon.size().width as f64, mon.size().height as f64);
+
+    // Pick monitor by index, fallback to primary
+    let monitors = main_win.available_monitors().ok().unwrap_or_default();
+    let mon = preferred_screen
+        .and_then(|idx| monitors.get(idx as usize).cloned())
+        .or_else(|| main_win.primary_monitor().ok()?);
+
+    let mon = mon?;
+    let scale = mon.scale_factor();
+    let mp = mon.position();
+    let ms = mon.size();
+    let (mx, my) = (mp.x as f64 / scale, mp.y as f64 / scale);
+    let (mw, mh) = (ms.width as f64 / scale, ms.height as f64 / scale);
 
     match pos {
-        DisplayPosition::Center => None, // let caller use .center()
-        DisplayPosition::BottomLeft => Some((0.0, mh - POPUP_H)),
-        DisplayPosition::BottomRight => Some((mw - POPUP_W, mh - POPUP_H)),
-        DisplayPosition::TopRight => Some((mw - POPUP_W, 0.0)),
+        DisplayPosition::Center => {
+            Some((mx + (mw - POPUP_W) / 2.0, my + (mh - POPUP_H) / 2.0))
+        }
+        DisplayPosition::BottomLeft => Some((mx, my + mh - POPUP_H)),
+        DisplayPosition::BottomRight => Some((mx + mw - POPUP_W, my + mh - POPUP_H)),
+        DisplayPosition::TopRight => Some((mx + mw - POPUP_W, my)),
         DisplayPosition::Random => {
             let mut rng = rand::thread_rng();
-            let x = rng.gen_range(0.0..(mw - POPUP_W).max(0.0));
-            let y = rng.gen_range(0.0..(mh - POPUP_H).max(0.0));
+            let x = mx + rng.gen_range(0.0..(mw - POPUP_W).max(0.0));
+            let y = my + rng.gen_range(0.0..(mh - POPUP_H).max(0.0));
             Some((x, y))
         }
     }
@@ -85,8 +102,11 @@ pub fn show_quote_popup<R: Runtime>(app: &AppHandle<R>) {
     // Update tray tooltip
     tray::trigger_tooltip_update(app);
 
-    // Read display position setting
-    let display_pos = data.settings.lock().unwrap().display_position; // Copy
+    // Read display settings
+    let (display_pos, preferred_screen) = {
+        let s = data.settings.lock().unwrap();
+        (s.display_position, s.preferred_screen)
+    };
 
     // Create the popup webview window at the right position
     let label = format!(
@@ -110,10 +130,8 @@ pub fn show_quote_popup<R: Runtime>(app: &AppHandle<R>) {
     .skip_taskbar(true)
     .transparent(true);
 
-    if let Some((x, y)) = calc_position(app, display_pos) {
+    if let Some((x, y)) = calc_position(app, display_pos, preferred_screen) {
         builder = builder.position(x, y);
-    } else {
-        builder = builder.center();
     }
 
     if let Err(e) = builder.build() {

@@ -1,5 +1,5 @@
 use rand::Rng;
-use tauri::{State};
+use tauri::{Manager, State};
 
 use crate::db::AppData;
 use crate::models::*;
@@ -266,3 +266,14 @@ pub fn trigger_quote_manually(data: State<AppData>) -> Result<Option<Quote>, Str
 pub fn popup_close(window: tauri::WebviewWindow) -> Result<(), String> {
     window.close().map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub fn get_monitor_count(app: tauri::AppHandle) -> Result<usize, String> {
+    let win = app
+        .get_webview_window("main")
+        .ok_or_else(|| "Main window not found".to_string())?;
+    let monitors = win.available_monitors().map_err(|e| e.to_string())?;
+    Ok(monitors.len())
+}
+
+

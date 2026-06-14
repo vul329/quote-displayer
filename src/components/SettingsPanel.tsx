@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import type { AppSettings, DisplayPosition, AnimationSpeed } from "../types";
 
@@ -27,6 +27,13 @@ export default function SettingsPanel({
   onSettingsChange,
 }: SettingsPanelProps) {
   const hotkeyTimer = useRef<number | null>(null);
+  const [monitorCount, setMonitorCount] = useState(1);
+
+  useEffect(() => {
+    invoke<number>("get_monitor_count")
+      .then(setMonitorCount)
+      .catch(() => setMonitorCount(1));
+  }, []);
 
   const scheduleReload = useCallback(() => {
     if (hotkeyTimer.current) clearTimeout(hotkeyTimer.current);
@@ -67,6 +74,33 @@ export default function SettingsPanel({
             </label>
           ))}
         </div>
+      </section>
+
+      <section className="settings-section">
+        <h4>螢幕設定</h4>
+        <div className="radio-group monitor-group">
+          <label className="radio-label">
+            <input
+              type="radio"
+              name="monitor"
+              checked={settings.preferred_screen === null}
+              onChange={() => update({ preferred_screen: null })}
+            />
+            <span>自動（主要螢幕）</span>
+          </label>
+          {Array.from({ length: monitorCount }, (_, i) => (
+            <label key={i} className="radio-label">
+              <input
+                type="radio"
+                name="monitor"
+                checked={settings.preferred_screen === i}
+                onChange={() => update({ preferred_screen: i })}
+              />
+              <span>螢幕 {i + 1}</span>
+            </label>
+          ))}
+        </div>
+        <span className="input-hint">選取後按快捷鍵測試彈窗位置</span>
       </section>
 
       <section className="settings-section">
